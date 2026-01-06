@@ -1,0 +1,46 @@
+sequenceDiagram  
+    %% Layout direction  
+    %% Adding LR direction for left to right flow  
+    actor User as "Utilisateur" 
+    participant UI as "Interface Web"  
+    participant API as "Backend"  
+    participant DB as "Base de données"  
+    participant Auth as "App Authenticator"      
+    User->>UI: Saisit email + mot de passe
+    UI->>API: POST /api/auth/login {email, password}
+    API->>DB: Vérifie identifiants
+    alt Identifiants valides
+        API->>DB: Vérifie si TOTP activé pour user
+        alt TOTP activé
+            API-->>UI: {totp_required: true, user_id: xxx}
+            UI->>User: Affiche champ code TOTP
+            User->>Auth: Consulte le code actuel
+            Auth-->>User: Affiche code TOTP
+            User->>UI: Saisit le code TOTP
+            UI->>API: POST /api/totp/validate {user_id, code}
+            API->>DB: Récupère secret chiffré
+            API->>API: Déchiffre le secret
+            API->>API: Vérifie code TOTP (fenêtre ±30s)
+            alt Code valide
+                API->>DB: Log événement (totp_success)
+                API->>DB: UPDATE last_used_at
+                alt Option "Appareil de confiance" cochée
+                    API->>API: Génère token d'appareil
+                    UI->>UI: Stocke token (cookie sécurisé)
+                else
+                    API-->>UI: {success: true}
+                end
+                UI->>User: Connexion réussie
+            else Code invalide
+                API->>DB: Log événement (totp_failure)
+                API-->>UI: {error: "Code invalide"}
+                UI->>User: Message d'erreur (2 essais restants)
+            end
+        else TOTP non activé
+            API-->>UI: {success: true, token: xxx}
+            UI->>User: Connexion réussie
+        end
+    else Identifiants invalides
+        API-->>UI: {error: "Identifiants invalides"}
+        UI->>User: Message d'erreur
+    end

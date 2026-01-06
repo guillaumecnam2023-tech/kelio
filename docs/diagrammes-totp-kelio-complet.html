@@ -1,8 +1,91 @@
-# Diagrammes de Flux - TOTP Kelio RH
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrammes TOTP Kelio RH - Complet</title>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 5px solid #667eea;
+            font-size: 1.8em;
+        }
+        .diagram-container {
+            background: #f8f9fa;
+            padding: 30px;
+            margin: 25px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+        .mermaid {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .architecture-diagram {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+        }
+        .footer {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
+            color: #6c757d;
+            text-align: center;
+        }
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Diagrammes de Flux - TOTP Kelio RH</h1>
 
-## 1. Flux d'Activation TOTP
-
-```mermaid
+        <h2>1. Flux d'Activation TOTP</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
 sequenceDiagram
     actor User as Utilisateur
     participant UI as Interface Web
@@ -40,12 +123,12 @@ sequenceDiagram
         API-->>UI: {error: "Code invalide"}
         UI->>User: Message d'erreur + réessayer
     end
-```
+            </div>
+        </div>
 
-
-## 2. Flux de Connexion avec TOTP
-
-```mermaid
+        <h2>2. Flux de Connexion avec TOTP</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
 sequenceDiagram
     actor User as Utilisateur
     participant UI as Interface Web
@@ -93,12 +176,12 @@ sequenceDiagram
         API-->>UI: {error: "Identifiants invalides"}
         UI->>User: Message d'erreur
     end
-```
+            </div>
+        </div>
 
-
-## 3. Flux d'Utilisation d'un Code de Récupération
-
-```mermaid
+        <h2>3. Flux d'Utilisation d'un Code de Récupération</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
 sequenceDiagram
     actor User as Utilisateur
     participant UI as Interface Web
@@ -123,12 +206,12 @@ sequenceDiagram
         UI->>User: Message d'erreur
         UI->>User: Option "Contacter le support"
     end
-```
+            </div>
+        </div>
 
-
-## 4. Flux de Désactivation TOTP
-
-```mermaid
+        <h2>4. Flux de Désactivation TOTP</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
 sequenceDiagram
     actor User as Utilisateur
     participant UI as Interface Web
@@ -155,13 +238,12 @@ sequenceDiagram
         API-->>UI: {error: "Mot de passe ou code invalide"}
         UI->>User: Message d'erreur
     end
-```
+            </div>
+        </div>
 
-
-## 5. Diagramme d'Architecture Système
-
-
-┌─────────────────────────────────────────────────────────────────────┐
+        <h2>5. Diagramme d'Architecture Système</h2>
+        <div class="diagram-container">
+            <div class="architecture-diagram">┌─────────────────────────────────────────────────────────────────────┐
 │                         COUCHE PRÉSENTATION                          │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
@@ -217,12 +299,12 @@ sequenceDiagram
 │  - Service de monitoring (Datadog, New Relic)                       │
 │  - Service de logs (ELK Stack, Splunk)                              │
 │  - Service d'alerte (PagerDuty)                                     │
-└─────────────────────────────────────────────────────────────────────┘
+└─────────────────────────────────────────────────────────────────────┘</div>
+        </div>
 
-
-## 6. Flux de Sécurité - Rate Limiting
-
-```mermaid
+        <h2>6. Flux de Sécurité - Rate Limiting</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
 flowchart TD
     A[Requête validation TOTP] --> B{Vérifier compteur tentatives}
     B -->|< 3 tentatives| C[Traiter la requête]
@@ -239,11 +321,12 @@ flowchart TD
     K -->|Non| M[Permettre nouvelle tentative]
     E --> N[Log tentative suspecte]
     L --> N
-```
+            </div>
+        </div>
 
-## 7. Diagramme d'États - Compte Utilisateur TOTP
-
-```mermaid
+        <h2>7. Diagramme d'États - Compte Utilisateur TOTP</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
 stateDiagram-v2
     [*] --> SansTOTP: Compte créé
     SansTOTP --> InitialisationEnCours: Début activation
@@ -255,11 +338,12 @@ stateDiagram-v2
     TOTPActif --> ReconfigurationRequise: Code récupération utilisé
     ReconfigurationRequise --> InitialisationEnCours: Reconfiguration
     ReconfigurationRequise --> TOTPActif: Délai expiré (30j)
-```
+            </div>
+        </div>
 
-## 8. Flux de Gestion Admin
-
-```mermaid
+        <h2>8. Flux de Gestion Admin</h2>
+        <div class="diagram-container">
+            <div class="mermaid">
 sequenceDiagram
     actor Admin as Administrateur
     participant UI as Interface Admin
@@ -291,15 +375,17 @@ sequenceDiagram
     API->>Email: Envoie notification utilisateur
     API-->>UI: {success: true}
     UI->>Admin: Confirmation "TOTP réinitialisé"
-```
+            </div>
+        </div>
 
----
-
-**Note** : Ces diagrammes peuvent être visualisés avec des outils compatibles Mermaid comme :
-- GitHub (rendu automatique des blocs mermaid)
-- Mermaid Live Editor (https://mermaid.live)
-- Extensions VSCode (Mermaid Preview)
-- GitLab, Notion, Confluence
-
-**Version** : 1.0  
-**Date** : Octobre 2025
+        <div class="footer">
+            <div class="note">
+                <strong>📝 Note :</strong> Ces diagrammes peuvent également être visualisés avec des outils compatibles Mermaid comme :
+                GitHub, Mermaid Live Editor (https://mermaid.live), Extensions VSCode, GitLab, Notion, Confluence
+            </div>
+            <p><strong>Version :</strong> 1.0 | <strong>Date :</strong> Octobre 2025</p>
+            <p style="color: #999; font-size: 0.9em;">Généré automatiquement pour Kelio RH</p>
+        </div>
+    </div>
+</body>
+</html>

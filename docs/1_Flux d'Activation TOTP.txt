@@ -1,0 +1,41 @@
+sequenceDiagram  
+    %% Layout direction  
+    %% Adding LR direction for left to right flow  
+    actor Utilisateur as User  
+    participant InterfaceWeb as "Interface Web"  
+    participant API_Backend as "API Backend"  
+    participant BaseDeDonnees as "Base de données"  
+    participant AppAuthenticator as "App Authenticator"  
+
+    User->>InterfaceWeb: Accède aux paramètres de sécurité  
+    InterfaceWeb->>User: Affiche option "Activer 2FA"  
+    User->>InterfaceWeb: Clique sur "Activer 2FA"  
+    InterfaceWeb->>API_Backend: POST /api/totp/setup  
+    API_Backend->>API_Backend: Génère secret TOTP (32 caractères)  
+    API_Backend->>API_Backend: Chiffre le secret  
+    API_Backend->>BaseDeDonnees: Sauvegarde secret chiffré (is_active=false)  
+    API_Backend->>API_Backend: Génère QR code  
+    API_Backend->>API_Backend: Génère 10 codes de récupération  
+    API_Backend->>BaseDeDonnees: Sauvegarde codes hashés  
+    API_Backend-->>InterfaceWeb: Retourne QR code + secret + codes récupération  
+    InterfaceWeb->>User: Affiche QR code  
+    User->>AppAuthenticator: Scanne le QR code  
+    AppAuthenticator->>AppAuthenticator: Enregistre le secret  
+    AppAuthenticator-->>User: Affiche code TOTP (6 chiffres)  
+    User->>InterfaceWeb: Saisit le code TOTP  
+    InterfaceWeb->>API_Backend: POST /api/totp/verify-setup {code}  
+    API_Backend->>BaseDeDonnees: Récupère secret chiffré  
+    API_Backend->>API_Backend: Déchiffre le secret  
+    API_Backend->>API_Backend: Vérifie le code TOTP  
+
+    %% Validation block for success or failure
+    alt Code valide  
+        API_Backend->>BaseDeDonnees: UPDATE is_active=true, activated_at=NOW()  
+        API_Backend-->>InterfaceWeb: {success: true}  
+        InterfaceWeb->>User: Affiche codes de récupération  
+        User->>User: Télécharge/sauvegarde les codes  
+        InterfaceWeb->>User: Confirmation "2FA activée"  
+    else Code invalide  
+        API_Backend-->>InterfaceWeb: {error: "Code invalide"}  
+        InterfaceWeb->>User: Message d'erreur + réessayer  
+    end
