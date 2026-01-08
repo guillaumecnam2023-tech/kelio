@@ -161,6 +161,53 @@ sequenceDiagram
 ## 5. Diagramme d'Architecture Système
 
 
+```mermaid
+graph TB
+    subgraph PRESENTATION["COUCHE PRÉSENTATION"]
+        Web["Interface Web<br/>(React/Vue)"]
+        AppAuth["Application<br/>Authenticator"]
+        Mobile["API Mobile<br/>(iOS/Android)"]
+    end
+
+    subgraph APPLICATION["COUCHE APPLICATION"]
+        Gateway["API REST / GraphQL Gateway<br/>(Express.js / Flask / Spring Boot)"]
+        
+        subgraph SERVICES["SERVICES MÉTIER"]
+            ServiceAuth["Service Auth<br/>- Login<br/>- Logout<br/>- Session<br/>- Permissions"]
+            ServiceTOTP["Service TOTP<br/>- Génération<br/>- Validation<br/>- QR Code<br/>- Recovery Codes"]
+            ServiceUser["Service Utilisateur<br/>- Profil<br/>- Paramètres<br/>- Admin"]
+        end
+    end
+
+    subgraph DATA["COUCHE DONNÉES"]
+        DB[("PostgreSQL/MySQL<br/>- Users<br/>- TOTP Secrets<br/>- Recovery Codes<br/>- Logs")]
+        Cache[("Redis Cache<br/>- Sessions<br/>- Rate Limit<br/>- Tokens")]
+        KMS[("KMS (Clés)<br/>- Encryption<br/>- Secrets")]
+    end
+
+    subgraph EXTERNAL["SERVICES EXTERNES"]
+        Email["Service d'email"]
+        Monitor["Service de monitoring"]
+        Logs["Service de logs"]
+        Alert["Service d'alerte"]
+    end
+
+    Web --> Gateway
+    AppAuth --> Gateway
+    Mobile --> Gateway
+    
+    Gateway --> SERVICES
+    
+    SERVICES --> DB
+    SERVICES --> Cache
+    SERVICES --> KMS
+    
+    SERVICES -.-> Email
+    SERVICES -.-> Monitor
+    SERVICES -.-> Logs
+    SERVICES -.-> Alert
+```
+
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         COUCHE PRÉSENTATION                          │
 ├─────────────────────────────────────────────────────────────────────┤
